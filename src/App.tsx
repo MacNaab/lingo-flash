@@ -20,6 +20,7 @@ import { SettingsPage } from "./pages/SettingsPage";
 import { CardsPage } from "./pages/CardsPage";
 import { useGamification } from "./hooks/useGamification";
 import { StreakAnimation } from "./components/gamification/StreakAnimation";
+import PWABadge from './PWABadge.tsx'
 
 const App: React.FC = () => {
   const [nativeLang, setNativeLang] = useState<Language>("fr");
@@ -460,6 +461,7 @@ const App: React.FC = () => {
           ))}
         </nav>
       )}
+      <PWABadge nativeLang={nativeLang} />
     </div>
   );
 };

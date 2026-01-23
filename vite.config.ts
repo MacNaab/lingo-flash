@@ -11,7 +11,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "prompt",
-      injectRegister: false,
+      injectRegister: "auto",
 
       pwaAssets: {
         disabled: false,
@@ -26,13 +26,13 @@ export default defineConfig({
       },
 
       workbox: {
-        globPatterns: ["**/*.{js,css,html,svg,png,ico}"],
+        globPatterns: ["**/*.{js,css,html,svg,png,ico,json,woff2}"],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
       },
 
       devOptions: {
-        enabled: false,
+        enabled: true,
         navigateFallback: "index.html",
         suppressWarnings: true,
         type: "module",

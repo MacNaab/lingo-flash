@@ -13,6 +13,10 @@ import {
   CalendarDays,
   Maximize2,
   X as CloseIcon,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 import type { Flashcard, Folder, Language } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
@@ -50,6 +54,9 @@ interface CardsPageProps {
 
 type SortOption = "newest" | "alpha-fr" | "alpha-es" | "review";
 
+
+const ITEMS_PER_PAGE = 15;
+
 export const CardsPage: React.FC<CardsPageProps> = ({
   cards,
   folders,
@@ -66,6 +73,12 @@ export const CardsPage: React.FC<CardsPageProps> = ({
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
   const [focusCard, setFocusCard] = useState<Flashcard | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset pagination when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedFolderIds, sortBy]);
 
   const toggleFolder = (id: string) => {
     const newSet = new Set(selectedFolderIds);
@@ -137,6 +150,13 @@ export const CardsPage: React.FC<CardsPageProps> = ({
       icon: CalendarDays,
     },
   };
+
+  const totalPages = Math.ceil(sortedAndFilteredCards.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedCards = sortedAndFilteredCards.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE,
+  );
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -307,7 +327,7 @@ export const CardsPage: React.FC<CardsPageProps> = ({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {sortedAndFilteredCards.map((card) => (
+        {paginatedCards.map((card) => (
           <Card
             key={card.id}
             className="group hover:border-indigo-200 dark:hover:border-indigo-800 transition-all overflow-hidden relative border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md"
@@ -497,6 +517,73 @@ export const CardsPage: React.FC<CardsPageProps> = ({
               ? "Aucune carte trouvée"
               : "No se encontraron tarjetas"}
           </p>
+        </div>
+      )}
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-6 mt-6 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+            {nativeLang === "fr" ? "Affichage de" : "Mostrando"}{" "}
+            <span className="font-bold text-gray-900 dark:text-gray-100">
+              {startIndex + 1}-{Math.min(startIndex + ITEMS_PER_PAGE, sortedAndFilteredCards.length)}
+            </span>{" "}
+            {nativeLang === "fr" ? "sur" : "de"}{" "}
+            <span className="font-bold text-gray-900 dark:text-gray-100">
+              {sortedAndFilteredCards.length}
+            </span>{" "}
+            {nativeLang === "fr" ? "cartes" : "tarjetas"}
+          </p>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9 hidden sm:flex"
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+            >
+              <ChevronsLeft size={16} />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft size={16} />
+            </Button>
+
+            <div className="flex items-center gap-1 mx-2">
+              <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
+                {currentPage}
+              </span>
+              <span className="text-sm text-gray-400">/</span>
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                {totalPages}
+              </span>
+            </div>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              <ChevronRight size={16} />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9 hidden sm:flex"
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages}
+            >
+              <ChevronsRight size={16} />
+            </Button>
+          </div>
         </div>
       )}
 

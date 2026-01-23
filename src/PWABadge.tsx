@@ -2,7 +2,11 @@ import './PWABadge.css'
 
 import { useRegisterSW } from 'virtual:pwa-register/react'
 
-function PWABadge() {
+type Props = {
+  nativeLang: 'fr' | 'es'
+}
+
+function PWABadge({ nativeLang }: Props) {
   // check for updates every hour
   const period = 60 * 60 * 1000
 
@@ -38,12 +42,12 @@ function PWABadge() {
         <div className="PWABadge-toast">
           <div className="PWABadge-message">
             { offlineReady
-              ? <span id="toast-message">App ready to work offline</span>
-              : <span id="toast-message">New content available, click on reload button to update.</span>}
+              ? <span id="toast-message">{nativeLang === 'fr' ? "App prête pour hors connexion" : "App lista para modo sin conexión"}</span>
+              : <span id="toast-message">{nativeLang === 'fr' ? "Nouveau contenu disponible, cliquez pour recharger." : "Nuevo contenido disponible, recarga para actualizar."}</span>}
           </div>
           <div className="PWABadge-buttons">
             { needRefresh && <button className="PWABadge-toast-button" onClick={() => updateServiceWorker(true)}>Reload</button> }
-            <button className="PWABadge-toast-button" onClick={() => close()}>Close</button>
+            <button className="PWABadge-toast-button" onClick={() => close()}>{nativeLang === 'fr' ? "Fermer" : "Cerrar"}</button>
           </div>
         </div>
       )}

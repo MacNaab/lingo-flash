@@ -262,7 +262,7 @@ export const StudyPage: React.FC<StudyPageProps> = ({
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     onClick={(e: any) => {
                       e.stopPropagation();
-                      onSpeak(displayCard.es, "es");
+                      onSpeak(displayCard[targetLang], targetLang);
                     }}
                   >
                     <Volume2
@@ -388,12 +388,17 @@ export const StudyPage: React.FC<StudyPageProps> = ({
               disabled={isOffline}
               variant="ghost"
               className="rounded-full text-gray-400 hover:text-indigo-600"
-              onClick={() => onSpeak(displayCard.es, "es")}
+              onClick={() => {
+                const textToSpeak = quizOptions
+                  .map((opt, i) => `${String.fromCharCode(65 + i)}. ${opt}`)
+                  .join(". ");
+                onSpeak(textToSpeak, targetLang);
+              }}
             >
-              <Volume2 size={20} className="mr-2" />{" "}
+              <Volume2 size={20} className="mr-2" />
               {nativeLang === "fr"
-                ? "Écouter l'Espagnol"
-                : "Escuchar el Español"}
+                ? "Écouter les options"
+                : "Escuchar las opciones"}
             </Button>
           </div>
         </div>
